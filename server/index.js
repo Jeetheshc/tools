@@ -1,24 +1,31 @@
 import express from "express";
-import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { connectDB } from "./config/db.js";
 import { apiRouter } from "./routes/index.js";
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config(); 
 
 const app = express();
-const PORT = process.env.PORT || 5000; // Use environment port or default to 5000
+const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
 connectDB();
 
 // Middleware
-app.use(express.json()); // For parsing JSON requests
+app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true
+}));
+app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.get("/", (req, res) => {
     res.send("<h1>Welcome to Panchayath toolbox</h1>");
 });
-// Main API Route
 app.use('/api', apiRouter);
 
 // Catch-All Route

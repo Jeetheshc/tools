@@ -1,26 +1,18 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 export const userAuth = (req, res, next) => {
     try {
-        const token = req.cookies.token;
-
+        const token = req.cookies.token; // Check if token is in cookie
         if (!token) {
-            return res.status(401).json({ message: "Unauthorized: No token provided" });
+            return res.status(401).json({ message: "Unauthorized1" });
         }
 
-        // Verify the token using a strong secret key
-        const tokenDecoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        if(!tokenDecoded){
-            return res.status(401).json({ message: "user not autherized" });
-        }
-
-        req.user = tokenDecoded;
-
+        // Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
         next();
-
     } catch (error) {
-        // Handle other errors
-        return res.status(500).json({ message: "Internal Server Error" });
+        console.error("Token verification failed:", error);
+        return res.status(401).json({ message: "Unauthorized2" });
     }
 };
